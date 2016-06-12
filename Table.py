@@ -23,4 +23,21 @@ class Table(object):
                 CREATE_TABLE += ", "
         CREATE_TABLE += ");"   
         self.getConnection().execute(CREATE_TABLE)
-        self.getConnection().close()
+    def insert(self, *insertData):
+        self.insertData = insertData
+        return self
+    def into(self, *columnInserts):
+        INSERT = 'INSERT INTO ' + self.getTableName() + ' ('
+        for col in range(len(columnInserts)):
+            INSERT += columnInserts[col]
+            if(col != len(columnInserts) - 1):
+                INSERT += ', '
+        INSERT += ') VALUES ('
+        for dat in range(len(self.insertData)):
+            INSERT += "?"
+            if(dat != len(self.insertData) - 1):
+                INSERT += ', '
+        INSERT += ')'
+        print(INSERT)
+        self.getConnection().execute(INSERT, self.insertData)  
+        self.getConnection().commit()    
