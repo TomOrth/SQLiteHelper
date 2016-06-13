@@ -1,8 +1,6 @@
 class Table(object):
-    def __init__(self, tableName="Simple"):
-        self.tableName = tableName
     def getTableName(self):
-        return self.tableName
+        return self.tab
     def setConnection(self, conn):
         self.conn = conn
     def getConnection(self):
@@ -27,17 +25,51 @@ class Table(object):
         self.insertData = insertData
         return self
     def into(self, *columnInserts):
-        INSERT = 'INSERT INTO ' + self.getTableName() + ' ('
+        INSERT = "INSERT INTO " + self.getTableName() + " ("
         for col in range(len(columnInserts)):
             INSERT += columnInserts[col]
             if(col != len(columnInserts) - 1):
-                INSERT += ', '
-        INSERT += ') VALUES ('
+                INSERT += ", "
+        INSERT += ") VALUES ("
         for dat in range(len(self.insertData)):
             INSERT += "?"
             if(dat != len(self.insertData) - 1):
-                INSERT += ', '
-        INSERT += ')'
-        print(INSERT)
+                INSERT += ", "
+        INSERT += ")"
         self.getConnection().execute(INSERT, self.insertData)  
-        self.getConnection().commit()    
+        self.getConnection().commit()  
+    def select(self, *selection):
+        self.selection = selection
+        self.status = "norm"
+        return self
+    def where(self, *params):
+        self.params = params
+        return self
+    def equals(self, *vals):
+        self.vals = vals
+        self.status = "where"
+        return self
+    def query(self):
+        if(self.status == "norm"):
+           QUERY = "SELECT "
+           for cols in range(len(self.selection)):
+               QUERY += self.selection[cols]
+               if(cols != len(self.selection) - 1):
+                   QUERY += ", "
+           QUERY += "  from " + self.getTableName() 
+           cursor = self.getConnection().execute(QUERY)
+           return cursor
+        elif(self.status == "where"):
+           QUERY = "SELECT "
+           for cols in range(len(self.selection)):
+               QUERY += self.selection[cols]
+               if(cols != len(self.selection) - 1):
+                   QUERY += ", "
+           QUERY += " FROM " + self.getTableName() + " where "
+           for p in range(len(self.params)):
+              QUERY += self.params[p] + "=?"
+              if(p != len(self.params) - 1):
+                  QUERY += ", "
+           print(QUERY)
+           cursor = self.getConnection().execute(QUERY, self.vals)
+           return cursor
