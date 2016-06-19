@@ -25,6 +25,26 @@ class Table(object):
     #sets tableName
     def setTable(self, tab):
         self.tab = tab
+    #detects if table exists
+    def tableExists(self):
+        isExist = False 
+        try:
+           self.getConnection().execute("SELECT * FROM " + self.getTableName())
+           isExist = True
+        except sqlite3.OperationalError:
+           isExist = False
+        return isExist
+    #Initializes table
+    def init(self, preset):
+        if(not self.tableExists()):
+            columns = preset.columns
+            datatypes = preset.datatypes
+            self.withColumns(*columns).withDataTypes(*datatypes).createTable()
+            if(len(preset.seed) > 0):
+                for index in range(len(preset.seed)):
+                    tmp = preset.seed
+                    self.insert(*tmp[index]).into(*columns)
+     
     #creates columns for table
     def withColumns(self, *columns):
         self.columns = columns

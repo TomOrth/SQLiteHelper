@@ -44,4 +44,34 @@ Deleting entries:
 db.table("content").delete().where("ID").equals(1).execute()
 ```
 
+Now, lets say you want to detect if a table exists before you query it
+```python
+db.table("content").tableExists
+```
+The above method will return a boolean, True if the table exists, False if it does not
+
+A neat feature is the ability to prepopulate a database with values when the table is created
+To do so, create a file, and lets call it initScript.py. In this file, place these lines
+```python
+class init(object):
+    def __init__(self):
+        self.columns = ["ID", "QUANTITY", "NAME"]
+        self.datatypes = ["INT PRIMARY KEY NOT NULL", "TEXT", "TEXT"]
+        self.seed = [["1", "Two", "Foo"],
+                     ["2", "Three", "Bar"]]
+        
+```
+The class does not need to be called init, but the init script must have columns(table columns), datatypes(the column's datatypes) and seed(list of rows of prepopulating data to be added to the table)
+
+Then in your main script, you would have something like this:
+```python
+from SQLiteHelper import SQLiteHelper as sq
+import initScript as ins
+ 
+db = sq.Connect("database")
+preset = ins.init()
+db.table("dbInitTest").init(preset)
+```
+This will initialize a table called dbInitTest wil 3 columns: ID, QUANTITY, and NAME, along with prepopulated rows of data.  This can be useful for needing preexisting data for actions like machine learning.
+
 More features to come. Please post issues and pull requests as needed
