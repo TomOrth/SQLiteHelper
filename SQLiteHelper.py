@@ -27,7 +27,7 @@ class Table(object):
         self.tab = tab
     #detects if table exists
     def tableExists(self):
-        isExist = False 
+        isExist = False
         try:
            self.getConnection().execute("SELECT * FROM " + self.getTableName())
            isExist = True
@@ -44,7 +44,7 @@ class Table(object):
                 for index in range(len(preset.seed)):
                     tmp = preset.seed
                     self.insert(*tmp[index]).into(*columns)
-     
+
     #creates columns for table
     def withColumns(self, *columns):
         self.columns = columns
@@ -60,7 +60,7 @@ class Table(object):
             CREATE_TABLE += self.columns[x] + " " + self.dataTypes[x]
             if(x != len(self.columns)-1):
                 CREATE_TABLE += ", "
-        CREATE_TABLE += ");"   
+        CREATE_TABLE += ");"
         self.getConnection().execute(CREATE_TABLE)
     #data to insert
     def insert(self, *insertData):
@@ -79,8 +79,8 @@ class Table(object):
             if(dat != len(self.insertData) - 1):
                 INSERT += ", "
         INSERT += ")"
-        self.getConnection().execute(INSERT, self.insertData)  
-        self.getConnection().commit()  
+        self.getConnection().execute(INSERT, self.insertData)
+        self.getConnection().commit()
     #columns to select from
     def select(self, *selection):
         self.selection = selection
@@ -116,7 +116,7 @@ class Table(object):
                 QUERY += self.selection[cols]
                 if(cols != len(self.selection) - 1):
                     QUERY += ", "
-            QUERY += " FROM " + self.getTableName() 
+            QUERY += " FROM " + self.getTableName()
             cursor = self.getConnection().execute(QUERY)
             return cursor
         elif(self.status == "where"):
@@ -130,7 +130,6 @@ class Table(object):
                QUERY += self.params[p] + "=?"
                if(p != len(self.params) - 1):
                    QUERY += ", "
-            print(QUERY)
             cursor = self.getConnection().execute(QUERY, self.vals)
             return cursor
         elif(self.status == "update"):
@@ -139,7 +138,7 @@ class Table(object):
                 QUERY += self.updateColumns[upCols] + "=?"
                 if(upCols != len(self.updateColumns) - 1):
                     QUERY += ", "
-            QUERY += " WHERE " 
+            QUERY += " WHERE "
             for whereCol in range(len(self.params)):
                 QUERY += self.params[whereCol] + "=?"
                 if(whereCol != len(self.params) - 1):
