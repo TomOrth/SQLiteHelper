@@ -46,7 +46,7 @@ db.table("content").delete().where("ID").equals(1).execute()
 
 Now, lets say you want to detect if a table exists before you query it
 ```python
-db.table("content").tableExists
+db.table("content").tableExists()
 ```
 The above method will return a boolean, True if the table exists, False if it does not
 
